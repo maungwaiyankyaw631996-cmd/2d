@@ -1,0 +1,6 @@
+{
+  "name": "2D Ledger & Slip Manager",
+  "description": "2D ဒိုင်ပုံစံ စာရင်းကိုင်၊ စလစ်တွက်ချက်ရေးနှင့် ထိုးကြေး Limit စီမံခန့်ခွဲမှု စနစ် (OCR & Voice ထောက်ပံ့မှုပါဝင်)",
+  "requestFramePermissions": ["microphone", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
