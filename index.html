@@ -1,18 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="my">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-    <meta name="description" content="An application built with Google AI Studio." />
-    <meta property="og:title" content="My Google AI Studio App" />
-    <meta property="og:description" content="An application built with Google AI Studio." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>2D ဒိုင် စာရင်းကိုင် & Limit မန်နေဂျာ</title>
+    <meta name="description" content="2D ဒိုင် စလစ်တွက်ချက်ရေး၊ ထိုးကြေး Limit စီမံခန့်ခွဲမှုနှင့် နေ့စဉ်ငွေစာရင်းချုပ် စနစ် (Android App)" />
+    
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <meta name="theme-color" content="#020617" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="2D Ledger" />
+    <meta name="application-name" content="2D Ledger" />
+    
+    <!-- App Icons & Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.svg" />
   </head>
-  <body>
+  <body class="bg-slate-950 text-slate-100 select-none antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('Service Worker registration skipped:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
 

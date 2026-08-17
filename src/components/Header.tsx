@@ -22,6 +22,7 @@ interface HeaderProps {
   settings: LimitSettings;
   onOpenSettings: () => void;
   onOpenSettlement: () => void;
+  onOpenAndroidInstall?: () => void;
   totalSales: number;
   totalHeld: number;
   totalOver: number;
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
   settings,
   onOpenSettings,
   onOpenSettlement,
+  onOpenAndroidInstall,
   totalSales,
   totalHeld,
   totalOver,
@@ -145,11 +147,24 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="open-settlement-btn"
             onClick={onOpenSettlement}
-            className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs sm:text-sm shadow-md transition-transform active:scale-95"
+            className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs sm:text-sm shadow-md transition-transform active:scale-95 cursor-pointer"
           >
             <Trophy className="w-4 h-4" />
             ပေါက်ဂဏန်း စစ်မည်
           </button>
+
+          {/* Android App Install Button */}
+          {onOpenAndroidInstall && (
+            <button
+              id="open-android-install-btn"
+              onClick={onOpenAndroidInstall}
+              className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow-md transition-transform active:scale-95 cursor-pointer"
+              title="Android App အဖြစ် ထည့်သွင်းရန်"
+            >
+              <span className="text-base leading-none">📱</span>
+              <span className="hidden sm:inline">Android App</span>
+            </button>
+          )}
 
           {/* Settings Button */}
           <button

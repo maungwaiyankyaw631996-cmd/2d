@@ -19,6 +19,15 @@ import { SlipsList } from "./components/SlipsList";
 import { DailyLedgerTracker } from "./components/DailyLedgerTracker";
 import { LimitSettingsModal } from "./components/LimitSettingsModal";
 import { SettlementModal } from "./components/SettlementModal";
+import { InstallAndroidAppModal } from "./components/InstallAndroidAppModal";
+import { 
+  FileText, 
+  Grid, 
+  DollarSign, 
+  Trophy, 
+  Smartphone, 
+  Layers 
+} from "lucide-react";
 
 // Helper to get formatted today date
 const getTodayDateString = () => {
@@ -157,6 +166,31 @@ export default function App() {
   // Modals state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSettlementOpen, setIsSettlementOpen] = useState(false);
+  const [isAndroidModalOpen, setIsAndroidModalOpen] = useState(false);
+  const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<any>(null);
+
+  // Capture PWA install prompt for Android
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredInstallPrompt(e);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleTriggerPWAInstall = async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const choiceResult = await deferredInstallPrompt.userChoice;
+      if (choiceResult.outcome === "accepted") {
+        setDeferredInstallPrompt(null);
+      }
+    }
+  };
 
   // Save to localStorage
   useEffect(() => {
@@ -275,7 +309,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 flex flex-col pb-20 sm:pb-6">
       {/* Top Header */}
       <Header
         currentDate={currentDate}
@@ -287,6 +321,7 @@ export default function App() {
         settings={settings}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenSettlement={() => setIsSettlementOpen(true)}
+        onOpenAndroidInstall={() => setIsAndroidModalOpen(true)}
         totalSales={sessionStats.totalSales}
         totalHeld={sessionStats.totalHeld}
         totalOver={sessionStats.totalOver}
@@ -296,7 +331,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6">
         {activeTab === "entry" && (
           <SlipEntrySection
             existingNumberTotals={existingNumberTotals}
@@ -337,6 +372,73 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Mobile Android Bottom Navigation Bar */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 border-t border-slate-800/90 backdrop-blur-lg px-2 py-1.5 flex items-center justify-around shadow-2xl">
+        <button
+          onClick={() => setActiveTab("entry")}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+            activeTab === "entry"
+              ? "text-emerald-400 font-bold scale-105"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <FileText className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px]">စလစ်တင်</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("matrix")}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+            activeTab === "matrix"
+              ? "text-emerald-400 font-bold scale-105"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Grid className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px]">ဂဏန်းကွက်</span>
+        </button>
+
+        <button
+          onClick={() => setIsSettlementOpen(true)}
+          className="flex flex-col items-center justify-center py-1 px-3 bg-amber-500 text-slate-950 font-black rounded-2xl shadow-lg -mt-4 ring-4 ring-slate-950 transition-transform active:scale-95 cursor-pointer"
+        >
+          <Trophy className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px]">ပေါက်စစ်</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("slips")}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer relative ${
+            activeTab === "slips"
+              ? "text-emerald-400 font-bold scale-105"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Layers className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px]">စလစ်များ ({currentSessionSlips.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("ledger")}
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
+            activeTab === "ledger"
+              ? "text-emerald-400 font-bold scale-105"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <DollarSign className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px]">စာရင်းချုပ်</span>
+        </button>
+      </nav>
+
+      {/* Android PWA Install Modal */}
+      <InstallAndroidAppModal
+        isOpen={isAndroidModalOpen}
+        onClose={() => setIsAndroidModalOpen(false)}
+        installPromptEvent={deferredInstallPrompt}
+        onTriggerInstall={handleTriggerPWAInstall}
+      />
 
       {/* Settings Modal */}
       <LimitSettingsModal
